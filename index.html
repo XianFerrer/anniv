@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Happy Anniversary</title>
+    <style>
+        body {
+            
+            font-family: "Press Start 2P", cursive;
+            text-align: center;
+            overflow: hidden;
+            background: url('bg.png') no-repeat center center fixed;
+            background-size: cover;
+           
+        }
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(73, 67, 67, 0.5); /* Adjust opacity here */
+    pointer-events: none; /* Ensures it doesn't block clicks */
+}
+        .modal, .loading-screen, .result-screen {
+            background: #ffecf4;
+            border-radius: 15px;
+            padding: 20px;
+            width: 500px;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(255, 0, 106, 0.2);
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+
+        .counter-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            margin: auto;
+            display: inline-block;
+            border: 2px solid #ff66a3;
+            box-shadow: 0px 4px 10px rgba(255, 0, 106, 0.3);
+            position: relative;
+        }
+
+        .counter-text {
+            font-size: 18px;
+            color: black;
+            line-height: 1.8;
+        }
+
+        .button-container {
+            margin-top: 15px;
+        }
+
+        .btn {
+            background: #ff99cc;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: "Press Start 2P";
+        }
+
+        .btn:hover {
+            background: #ff66a3;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #f8c6d8;
+            border-radius: 10px;
+            margin-top: 15px;
+            height: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #ff66a3;
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        #modal {
+            display: block;
+        }
+
+        /* Popup message styling */
+        .popup {
+            position: absolute;
+            background: #ffcce0;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-family: "Press Start 2P";
+            box-shadow: 2px 2px 10px rgba(255, 0, 106, 0.3);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        /* Floating Hearts */
+.heart {
+    position: absolute;
+    color: #ff4d94;
+    font-size: 20px;
+    opacity: 0.8;
+    animation: float 4s linear infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+}
+
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <!-- First Modal -->
+    <div class="modal" id="modal">
+        <h2>Happy Anniversary!</h2>
+        <p>Want to see how long we've been together?</p>
+        <div class="button-container">
+            <button class="btn" onclick="startLoading()">Sure</button>
+            <button class="btn">Maybe later</button>
+        </div>
+    </div>
+<!-- Floating Hearts Container -->
+<div id="heartContainer"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading">
+        <h2>Calculating...</h2>
+        <p>Loading your time together...</p>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-screen" id="result">
+        <h2>Time We've Spent Together</h2>
+        <div class="counter-box">
+            <p id="timeCounter" class="counter-text"></p>
+        </div>
+        <div class="button-container">
+            <button class="btn" onclick="showPopup()">💖</button>
+        </div>
+    </div>
+
+    <script>
+        function startLoading() {
+            document.getElementById("modal").style.display = "none";
+            document.getElementById("loading").style.display = "block";
+
+            let progressBar = document.getElementById("progressBar");
+            let progressText = document.getElementById("progressText");
+            let width = 0;
+            let interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showResult, 500);
+                } else {
+                    width++;
+                    progressBar.style.width = width + "%";
+                    progressText.textContent = width + "%";
+                }
+            }, 30);
+        }
+
+        function showResult() {
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("result").style.display = "block";
+            startCounter();
+            showRandomPopups();
+        }
+
+        function startCounter() {
+    const anniversaryDate = new Date("2024-02-15T00:00:00");
+
+    setInterval(() => {
+        let now = new Date();
+        
+        let years = now.getFullYear() - anniversaryDate.getFullYear();
+        let months = now.getMonth() - anniversaryDate.getMonth();
+        let days = now.getDate() - anniversaryDate.getDate();
+        let hours = now.getHours() - anniversaryDate.getHours();
+        let minutes = now.getMinutes() - anniversaryDate.getMinutes();
+        let seconds = now.getSeconds() - anniversaryDate.getSeconds();
+
+        // Adjust negative values properly
+        if (seconds < 0) {
+            seconds += 60;
+            minutes--;
+        }
+        if (minutes < 0) {
+            minutes += 60;
+            hours--;
+        }
+        if (hours < 0) {
+            hours += 24;
+            days--;
+        }
+        if (days < 0) {
+            let lastMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate(); // Last day of previous month
+            days += lastMonth;
+            months--;
+        }
+        if (months < 0) {
+            months += 12;
+            years--;
+        }
+
+        // Special case for the exact anniversary day
+        if (now.getMonth() === 1 && now.getDate() === 15) {
+            months = 0;
+            days = 0;
+        }
+
+        document.getElementById("timeCounter").innerHTML = `
+            ${years} Year<br>
+            ${months} Months<br>
+            ${days} Days<br>
+            ${hours} Hours<br>
+            ${minutes} Minutes<br>
+            ${seconds} Seconds
+        `;
+    }, 1000);
+}
+
+
+
+function showPopup() {
+    let messages = [
+        "You are my forever!",
+        "I love you!",
+        "Happy Anniversary",
+        "Every second with you is precious 💖",
+        "You make my world brighter!",
+        "Together forever! 💞",
+        "You are my everything!"
+    ];
+
+    let popup = document.createElement("div");
+    popup.className = "popup";
+    popup.innerText = messages[Math.floor(Math.random() * messages.length)];
+    document.body.appendChild(popup);
+
+    let counterBox = document.querySelector(".counter-box");
+    let rect = counterBox.getBoundingClientRect();
+
+    // Adjusting the random position to be around the counter box
+    let randomX = rect.left + (Math.random() * rect.width - 50); // -50 to keep it centered
+    let randomY = rect.top + (Math.random() * 150 - 75); // Moves it slightly above or below
+
+    // Ensuring it stays within the viewport
+    randomX = Math.max(10, Math.min(window.innerWidth - 100, randomX));
+    randomY = Math.max(10, Math.min(window.innerHeight - 100, randomY));
+
+    popup.style.left = `${randomX}px`;
+    popup.style.top = `${randomY}px`;
+    popup.style.opacity = "1";
+
+    setTimeout(() => {
+        popup.style.opacity = "0";
+        setTimeout(() => popup.remove(), 500);
+    }, 3000);
+}
+
+
+    function showRandomPopups() {
+        setInterval(() => {
+            showPopup();
+        }, 3000); // Shows a pop-up every 5 seconds
+    }
+    function createHeart() {
+    let heart = document.createElement("div");
+    heart.innerHTML = "💖";
+    heart.className = "heart";
+    document.body.appendChild(heart);
+
+    let randomSize = Math.random() * 20 + 10; // Random size between 10px-30px
+    heart.style.fontSize = randomSize + "px";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.bottom = "-10px"; // Start from bottom
+    heart.style.position = "fixed"; // Ensures it stays relative to the screen
+    heart.style.opacity = Math.random() * 0.5 + 0.5; // Random opacity between 0.5 and 1
+
+    let duration = Math.random() * 3 + 3; // 3s to 6s
+    heart.style.animation = `float ${duration}s linear`;
+
+    setTimeout(() => {
+        heart.remove();
+    }, duration * 1000);
+}
+
+// Create hearts every 500ms
+setInterval(createHeart, 500);
+
+    </script>
+
+</body>
+</html>
